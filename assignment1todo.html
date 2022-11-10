@@ -76,7 +76,7 @@
         </div>
         <div class="row">
           <div class="col-lg-8 col-md-8 col-10 offset-lg-2 offset-md-2 offset-1">
-              <form action="javascript:void(0);"> 
+              <form action="javascript:void(0);" id = "makeTodo"> 
                 <div class="form-group">
                     <input type="text" id = "fName" class="form-control"  placeholder="First Name">
                 </div>
@@ -94,7 +94,7 @@
                 </div>
                 <div class="form-button d-flex justify-content-center">
                   <button type="submit" 
-                      onclick="addUser()" class="btn btn-info p-2">Add New Users
+                      onclick="addUser()" class="btn btn-info p-2">Add User
                   </button>
                 </div>  
               </form>
@@ -107,7 +107,7 @@
       <div class="container">
         <div class="row">
           <div class="col-12" style=margin:30px 0 30px 0">
-            <h2 class="text-center">Users</h2>
+            <h2 class="text-center">List Of Users</h2>
             <table style="width:100%;" 
             id = "tableData" class="table table-striped">
               <tr style="width:100%" id = "mainRow" class="text-center">
@@ -157,7 +157,7 @@
               placeholder="Phone Number" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}">
             </div>
             <div class="form-group" class = "bg-dark text-center">
-               <button class="btn btn-success" type = "submit" data-dismiss="modal" id = "updateBtn"  style="min-width:100%">Update</button>
+               <button class="btn btn-success" type = "submit" data-dismiss="modal" id = "updateBtn" onclick = "User.updateUser(this)" style="min-width:100%">Update</button>
             </div>
         </form>
         </div>
@@ -178,8 +178,55 @@
       // Function add new user 
       var person = []; 
       var tableData = document.getElementById("tableData");
-      function listData() {
-        person.map(element=>{
+      class User {
+        constructor(id, fName, lName, age, email, phone){
+          this.id = id;
+          this.fName = fName;
+          this.lName = lName;
+          this.email = email;
+          this.age = age;
+          this.phone = phone;
+        }
+        static editUser(e){
+          console.log(e.value);
+          person.map(elem=>{
+            if (elem.id == e.value){
+                document.getElementById("editFName").value = elem.fName;
+                document.getElementById("editLName").value = elem.lName;
+                document.getElementById("editAge").value = elem.age;
+                document.getElementById("editEmail").value = elem.email;
+                document.getElementById("editPhone").value = elem.phone;
+                document.getElementById("updateBtn").value = elem.id;
+            }
+          });
+        }
+        static updateUser(e){
+          console.log(e);
+          const item = document.querySelector(`[data-key='${e.value}']`);
+          var tableData = document.getElementById("tableData");
+          const node = document.createElement("tr");
+          node.setAttribute('data-key', e.value);
+          if(item){
+            tableData.removeChild(item);
+            person.map(elem=>{
+            console.log(elem);
+              if(elem.id == e.value){
+                  elem.fName = document.getElementById("editFName").value;
+                  elem.lName =  document.getElementById("editLName").value;
+                  elem.email =  document.getElementById("editEmail").value;
+                  elem.age = document.getElementById("editAge").value;
+                  elem.phone = document.getElementById("editPhone").value;
+                  alert(elem.fName +" updated at " + elem.id );
+                  const makeInstance = new Interface();
+                  makeInstance.listData();
+              }
+            });
+          }
+        }
+      }
+      class Interface {
+        listData() {
+          person.map(element=>{
             const nodeRow = document.createElement("tr");
             const item = document.querySelector(`[data-key='${element.id}']`);
             nodeRow.setAttribute('data-key', element.id);
@@ -195,7 +242,7 @@
                 <td>
                   <button data-toggle="modal" data-target="#myModal" 
                   class = "btn btn-info" value = ${element.id} id = "editUser" 
-                  onclick = "editUser(this)">
+                  onclick = "User.editUser(this)">
                     <i class = "fa fa-edit"></i>
                 </td>
               `;
@@ -205,8 +252,11 @@
                 tableData.append(nodeRow);
               }
           });
+        }
       }
+      
        function addUser(event) {
+        var form = document.getElementById("makeTodo"); 
         var firstName = document.getElementById("fName"); 
         var lastName =document.getElementById("lName");
         var age = document.getElementById("age");
@@ -246,72 +296,16 @@
             email.style.background = "yellow";
           return false;
         } else {
-          let data = {
-            id:id,
-            fName:firstName.value,
-            lName:lastName.value,
-            age:age.value,
-            email:email.value,
-            phone:phone.value,
-          }
-          person.push(data);
+          let user = new User(id, firstName.value, lastName.value, age.value, email.value, phone.value);
+          person.push(user);
         }
+        const getUI = new Interface();
           alert("New User Created");
           console.log(person);
-          listData();
-          firstName.value = '';
-          lastName.value = '';
-          age.value = '';
-          email.value = '';
-          phone.value = '';
+          form.reset();
+          getUI.listData();
         }
-         
-        
-        
-        // Edit User
-          function editUser(e){
-            person.map(elem=>{
-              if (elem.id == e.value){
-                  document.getElementById("editFName").value = elem.fName;
-                  document.getElementById("editLName").value = elem.lName;
-                  document.getElementById("editAge").value = elem.age;
-                  document.getElementById("editEmail").value = elem.email;
-                  document.getElementById("editPhone").value = elem.phone;
-                  document.getElementById("updateBtn").value = elem.id;
-              }
-            })
-          }
-          
-        
-        // end edit user function
 
-        //start update user function
-
-        updateBtn.addEventListener("click",function(e){
-          const item = document.querySelector(`[data-key='${e.target.value}']`);
-          var tableData = document.getElementById("tableData");
-          const node = document.createElement("tr");
-          node.setAttribute('data-key', e.target.value);
-          if(item){
-            tableData.removeChild(item);
-            person.map(elem=>{
-            console.log(elem);
-              if(elem.id == e.target.value){
-                  elem.fName = document.getElementById("editFName").value;
-                  elem.lName =  document.getElementById("editLName").value;
-                  elem.age = document.getElementById("editAge").value;
-                  elem.email = document.getElementById("editEmail").value;
-                  elem.phone = document.getElementById("editPhone").value;
-                  alert(elem.fName +" updated at " + elem.id );
-                  listData();
-              }
-          });
-          }
-        });
-        // End update
-
-
-  // End Function
      
     </script>
 </body>
