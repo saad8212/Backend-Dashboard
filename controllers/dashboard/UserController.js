@@ -8,6 +8,7 @@ const update_user = async (req, res) => {
   const id = req.params.id;
   console.log(id)
   const { name, email } = req.body;
+  console.log(req.body);
   try {
     let data = await User.findById(id);
     if(!data) {
@@ -27,10 +28,10 @@ const update_user = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.params.id, record, {
       new: true,
     })
-    return res.status(200).send(user);
+     user && res.status(200).send(user);
   } catch (err) {
     console.log(err);
-    return res.status(409).send({ message: err.message });
+     err &&  res.status(409).send({ message: err.message });
   }
 };
 
