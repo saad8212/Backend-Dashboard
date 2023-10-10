@@ -1,25 +1,18 @@
 require('dotenv').config();
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
+const dbconfig = mongoose.set("strictQuery", false);
+const db = process.env.MONGODB_URI;
 
-let isConnected = false;
+mongoose.connect(db, {
+    dbName: "dashboard",
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+    .then((res) => {
+        console.log("database connection established");
+    })
+    .catch((err) => {
+        console.log("error connecting to database, ", err);
+    });
+module.export = { dbconfig };
 
-const connectToDB = async () => {
-    mongoose.set('strictQuery', true);
-    if (isConnected) {
-        console.log('MongoDB is already connected!');
-        return;
-    }
-    try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            dbName: "dashboard",
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        })
-        isConnected = true;
-        console.log("MongoDB Connected!")
-    } catch (error) {
-        console.error(error);
-    }
-
-}
-module.export = {connectToDB}
