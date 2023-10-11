@@ -1,9 +1,7 @@
  
 const User = require("../../models/dashboard/login");
 const cloudinary = require("../../utils/cloudinary");
-
-
-/*** update user through edit users ***/
+ 
 const update_user = async (req, res) => {
   const id = req.params.id;
   console.log(id)
@@ -34,9 +32,17 @@ const update_user = async (req, res) => {
      err &&  res.status(409).send({ message: err.message });
   }
 };
+const get_users = async (req, res) => {
+  try {
+    const users = await User.find();
+    users && res.status(200).send(users);
 
+  } catch(error) {
+    error && res.status(500).json({message: error.stack});
+  }
+}
 
 
 
 /*** Export all functions ***/
-module.exports = { update_user };
+module.exports = { update_user, get_users };
