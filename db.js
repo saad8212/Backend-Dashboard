@@ -1,10 +1,10 @@
 require('dotenv').config();
 const mongoose = require("mongoose");
 const dbconfig = mongoose.set("strictQuery", false);
-const db = process.env.MONGODB_URI;
+const db = 'mongodb+srv://saad:saad8212@cluster0.irhxo3y.mongodb.net/dashboard?tls=true';
 
 mongoose.connect(db, {
-    dbName: "dashboard",
+   
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
